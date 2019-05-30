@@ -1,0 +1,6 @@
+Something Here 0
+after fork 55299
+parent writes to file
+Something Here 0
+after fork 0
+child writes to file

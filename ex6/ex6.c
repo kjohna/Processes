@@ -21,6 +21,41 @@ and `clock_gettime()` should work just fine.
 int main()
 {
     // Your code here
-    
+    // a struct for clock_gettime() to populate:
+    struct timespec start, end;
+    // store difference calc here
+    uint64_t diff, avg;
+    int first = 1;
+
+    for (int i = 0; i < number_iter; i++)
+    {
+        clock_gettime(CLOCK_MONOTONIC, &start);
+        // time how long this takes:
+        printf("");
+        sleep(0.001);
+        clock_gettime(CLOCK_MONOTONIC, &end);
+        diff = BILLION * (end.tv_sec - start.tv_sec) + end.tv_nsec - start.tv_nsec;
+
+        // printf("start: %lf\n", start.tv_sec + start.tv_nsec / 1000000000.);
+        // printf("end: %lf\n", end.tv_sec + end.tv_nsec / 1000000000.);
+        // printf("%lf\n", diff);
+        // calc simple moving average:
+        if (first)
+        {
+            avg = diff;
+            first = 0;
+        }
+        else
+        {
+            avg = (diff + i * avg) / (i + 1);
+        }
+        if (!(i % 100000))
+        {
+            printf("%d, average time taken: %llu ns", i, avg);
+            printf("current: %llu ns\n", diff);
+        }
+    }
+    printf("FINAL average time taken: %llu ns after %d runs.\n", avg, number_iter);
+    printf("FINAL average time taken: %f s after %d runs.\n", avg / 1000000000., number_iter);
     return 0;
 }

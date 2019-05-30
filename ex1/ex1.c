@@ -9,6 +9,26 @@
 int main(void)
 {
     // Your code here
+    int x = 100;
+    printf("before fork, x = %d\n", x);
+    int rc = fork();
 
+    if (rc < 0)
+    {
+        // fork failed
+        printf("fork failed :(\n");
+    }
+    else if (rc == 0)
+    {
+        printf("child says x = %d\n", x);
+        x = 50;
+        printf("child changed x to %d\n", x);
+    }
+    else
+    {
+        printf("parent says x = %d\n", x);
+        x = 75;
+        printf("parent changed x to %d\n", x);
+    }
     return 0;
 }
