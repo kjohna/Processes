@@ -15,7 +15,7 @@ and `clock_gettime()` should work just fine.
 #include <unistd.h>
 #include <time.h>
 
-#define number_iter 50 //1000000
+#define number_iter 1000000
 #define BILLION 1000000000L
 
 int main()
@@ -24,7 +24,7 @@ int main()
     // a struct for clock_gettime() to populate:
     struct timespec start, end;
     // store difference calc here
-    double diff, avg;
+    uint64_t diff, avg;
     int first = 1;
 
     for (int i = 0; i < number_iter; i++)
@@ -32,9 +32,9 @@ int main()
         clock_gettime(CLOCK_MONOTONIC, &start);
         // time how long this takes:
         printf("");
-        // sleep(1);
+        sleep(0.001);
         clock_gettime(CLOCK_MONOTONIC, &end);
-        diff = (end.tv_sec - start.tv_sec) + (end.tv_nsec - start.tv_nsec) / 1000000000.;
+        diff = BILLION * (end.tv_sec - start.tv_sec) + end.tv_nsec - start.tv_nsec;
 
         // printf("start: %lf\n", start.tv_sec + start.tv_nsec / 1000000000.);
         // printf("end: %lf\n", end.tv_sec + end.tv_nsec / 1000000000.);
@@ -47,14 +47,15 @@ int main()
         }
         else
         {
-            avg = (diff + (float)i * avg) / ((float)i + 1);
+            avg = (diff + i * avg) / (i + 1);
         }
-        // if (!(i % 100000))
-        // {
-        printf("current: %lf ", diff);
-        printf("%d, average time taken: %lf s\n", i, avg);
-        // }
+        if (!(i % 100000))
+        {
+            printf("%d, average time taken: %llu ns", i, avg);
+            printf("current: %llu ns\n", diff);
+        }
     }
-    printf("FINAL average time taken: %lf s after %d runs.\n", avg, number_iter);
+    printf("FINAL average time taken: %llu ns after %d runs.\n", avg, number_iter);
+    printf("FINAL average time taken: %f s after %d runs.\n", avg / 1000000000., number_iter);
     return 0;
 }
